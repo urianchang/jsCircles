@@ -9,6 +9,7 @@
 	<svg id="svg"></svg>
 
 	<script>
+	var rad = 10;
 	function Circle(cx, cy, html_id)
 	{
 		var html_id = html_id;
@@ -26,11 +27,13 @@
 				y: randomNumberBetween(-3,3)
 			}
 
+			//Add function to determine how long mouse was held down
+
 			//create a circle
 			var circle = makeSVG('circle',
 				{ 	cx: this.info.cx,
 				  	cy: this.info.cy,
-				  	r:  10,
+				  	r:  rad,
 				  	id: html_id,
 				  	style: "fill: black"
 				});
@@ -42,14 +45,14 @@
 			var el = document.getElementById(html_id);
 
 			//see if the circle is going outside the browser. if it is, reverse the velocity
-			//Add or subtract circle radius (10) so balls bounce off of wall
-			if( (this.info.cx + 10) > document.body.clientWidth || (this.info.cx - 10) < 0)
+			//Add or subtract circle radius so balls bounce off of wall
+			if( (this.info.cx + rad) > document.body.clientWidth || (this.info.cx - rad) < 0)
 			{
 				// console.log("this.info.cx ", this.info.cx);
 				// console.log("document.body.clientWidth ", document.body.clientWidth);
 				this.info.velocity.x = this.info.velocity.x * -1;
 			}
-			if( (this.info.cy + 10) > document.body.clientHeight || (this.info.cy - 10) < 0)
+			if( (this.info.cy + rad) > document.body.clientHeight || (this.info.cy - rad) < 0)
 			{
 				// console.log("this.info.cy ", this.info.cy);
 				// console.log("document.body.clientHeight ", document.body.clientHeight);
