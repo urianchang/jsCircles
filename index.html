@@ -73,6 +73,18 @@
 	    this.initialize();
 	}
 
+	function collide(p1x, p1y, r1, p2x, p2y, r2) {
+		var a = r1 + r2;
+		var x = p1x - p2x;
+		var y = p1y - p2y;
+
+		if (a < Math.sqrt( (x*x) + (y*y) )){
+			return false;
+		} else {
+			return true;
+		}
+	}
+
 	function PlayGround()
 	{
 		var counter = 0;  //counts the number of circles created
@@ -83,6 +95,21 @@
 			for(circle in circles)
 			{
 				circles[circle].update(1);
+				if (counter >= 2) {
+					for(var ind = 1; ind <= (circles.length-1); ind++)
+					{
+						if (collide(circles[ind-1].info.cx, circles[ind-1].info.cy, circles[ind-1].info.r, circles[ind].info.cx, circles[ind].info.cy, circles[ind].info.r)){
+							console.log("Collision!");
+							// if (circles[ind].info.r > circles[ind-1].info.r) {
+							// 	delete circles[ind-1];
+							// } else {
+							// 	delete circles[ind];
+							// }
+						}
+					// console.log(circles[0].info.cx);
+					// console.log(circles[1].info.cx);
+					}
+				}
 			}
 		}
 
