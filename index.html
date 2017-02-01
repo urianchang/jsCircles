@@ -13,7 +13,7 @@
 	function Circle(cx, cy, r, html_id)
 	{
 		var html_id = html_id;
-		this.info = { cx: cx,  cy: cy, r: r };
+		this.info = { cx: cx,  cy: cy, r: r, html_id: html_id };
 
 		//private function that generates a random number
 		var randomNumberBetween = function(min, max){
@@ -32,11 +32,12 @@
 				{ 	cx: this.info.cx,
 				  	cy: this.info.cy,
 				  	r:  this.info.r,
-				  	id: html_id,
+				  	id: this.info.html_id,
 				  	style: "fill: black"
 				});
 
 			document.getElementById('svg').appendChild(circle);
+			// console.log(document.getElementById('svg'));
 		}
 
 		this.update = function(time){
@@ -95,19 +96,30 @@
 			for(circle in circles)
 			{
 				circles[circle].update(1);
+
+				//Check for ball collisions when there are 2+ balls
 				if (counter >= 2) {
-					for(var ind = 1; ind <= (circles.length-1); ind++)
+					//Compare each element to rest of the array
+					for(var ind = 0; ind < circles.length; ind++)
 					{
-						if (collide(circles[ind-1].info.cx, circles[ind-1].info.cy, circles[ind-1].info.r, circles[ind].info.cx, circles[ind].info.cy, circles[ind].info.r)){
-							console.log("Collision!");
-							// if (circles[ind].info.r > circles[ind-1].info.r) {
-							// 	delete circles[ind-1];
-							// } else {
-							// 	delete circles[ind];
-							// }
+						for (var another = ind + 1; another < circles.length; another++) {
+							if (circles[ind] != circles[another]) {
+								if (collide(circles[another].info.cx, circles[another].info.cy, circles[another].info.r, circles[ind].info.cx, circles[ind].info.cy, circles[ind].info.r)){
+									console.log("Collision!");
+									var id_ind = document.getElementById(circles[ind].info.html_id);
+									var id_another = document.getElementById(circles[another].info.html_id);
+
+									//The larger circle destroys the smaller circle
+									if (circles[ind].info.r > circles[another].info.r) {
+										circles.splice(another, 1); //Need to do splice to remove element from array because delete sets element to undefined
+										document.getElementById('svg').removeChild(id_another);
+									} else {
+										circles.splice(ind, 1); //See note about array splice above.
+										document.getElementById('svg').removeChild(id_ind);
+									}
+								}
+							}
 						}
-					// console.log(circles[0].info.cx);
-					// console.log(circles[1].info.cx);
 					}
 				}
 			}
@@ -132,17 +144,21 @@
 		var date = new Date();
 		return date.getTime();
 	}
+
 	//When mouse button is held...
 	document.onmousedown = function(e){
 		mousedown_time = getTime();
 	}
+
 	//When mouse button is released...
 	document.onmouseup = function(e){
 		time_pressed = getTime() - mousedown_time;
 		// console.log('You held your mouse down for', time_pressed, 'miliseconds.');
+
 		//Circle radius is relative to how long button is held -- longer = bigger
 		r = Math.ceil(time_pressed/10);
 		// console.log("Circle radius:", r);
+
 		//Create new circle with new parameters
 		playground.createNewCircle(e.x,e.y,r);
 	}
